@@ -236,4 +236,11 @@ public class WebSocketNetworkModule extends WebSocketAdapter implements
 		}
 	}
 
+	public void clientStop() {
+		try {
+			client.stop();
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
 }

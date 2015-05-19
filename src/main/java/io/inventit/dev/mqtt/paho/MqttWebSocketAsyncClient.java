@@ -24,6 +24,7 @@ public class MqttWebSocketAsyncClient extends MqttAsyncClient {
 	private final Logger log;
 
 	private final String serverURI;
+	private WebSocketNetworkModule netModule;
 
 	/**
 	 * Create a dummy URI in order to by-pass MqttConnectOptions.validateURI()
@@ -168,10 +169,17 @@ public class MqttWebSocketAsyncClient extends MqttAsyncClient {
 	 */
 	protected NetworkModule newWebSocketNetworkModule(URI uri,
 			String subProtocol, MqttConnectOptions options) {
-		final WebSocketNetworkModule netModule = new WebSocketNetworkModule(
+		netModule = new WebSocketNetworkModule(
 				uri, subProtocol, getClientId());
 		netModule.setConnectTimeout(options.getConnectionTimeout());
 		return netModule;
+	}
+
+	@Override
+	public void close() throws MqttException {
+		netModule.clientStop();
+		comms.shutdownConnection(null,null);
+		super.close();
 	}
 
 }
